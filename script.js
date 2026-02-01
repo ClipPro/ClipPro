@@ -1,4 +1,4 @@
-﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -122,17 +122,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateStars(currentRating);
 
-    /* ===== AVATAR PICKER ===== */
+    /* ===== AVATAR SYSTEM (FIXED + CLEAN) ===== */
+
+    const MALE_AVATAR = "https://api.dicebear.com/7.x/personas/svg?seed=male&backgroundColor=b6e3f4";
+    const FEMALE_AVATAR = "https://api.dicebear.com/7.x/personas/svg?seed=female&backgroundColor=fad0c4";
+
     const avatarOptions = document.querySelectorAll(".avatar-option");
     const customAvatarInput = document.getElementById("custom-avatar-input");
-    let selectedAvatar = avatarOptions[0]?.dataset.avatar;
+
+    let selectedAvatar = MALE_AVATAR;
     let customAvatarDataUrl = null;
+
+    // Init default preview images
+    avatarOptions.forEach(opt => {
+        if (opt.dataset.avatar === "male") opt.src = MALE_AVATAR;
+        if (opt.dataset.avatar === "female") opt.src = FEMALE_AVATAR;
+    });
+
+    avatarOptions[0]?.classList.add("selected");
 
     avatarOptions.forEach(img => {
         img.addEventListener("click", () => {
             avatarOptions.forEach(a => a.classList.remove("selected"));
             img.classList.add("selected");
-            selectedAvatar = img.dataset.avatar;
+            selectedAvatar = img.src;
             customAvatarDataUrl = null;
         });
     });
@@ -147,12 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
             let previewImg = document.querySelector(".avatar-option.custom");
             if (!previewImg) {
                 previewImg = document.createElement("img");
-                previewImg.className = "avatar-option custom";
+                previewImg.className = "avatar-option custom selected";
                 document.querySelector(".avatar-picker").prepend(previewImg);
             }
             previewImg.src = customAvatarDataUrl;
-            previewImg.classList.add("selected");
-            selectedAvatar = null;
+            selectedAvatar = customAvatarDataUrl;
         };
         reader.readAsDataURL(file);
     });
@@ -184,11 +196,13 @@ document.addEventListener("DOMContentLoaded", () => {
         reviewsTrack.innerHTML = "";
 
         docs.forEach(c => {
+            const avatarSrc = c.avatar || MALE_AVATAR;
+
             const div = document.createElement("div");
             div.className = "testimonial";
             div.innerHTML = `
         <div class="testimonial-header">
-          <img src="${c.avatar}" class="testimonial-avatar">
+          <img src="${avatarSrc}" class="testimonial-avatar">
           <strong>${c.name}</strong>
         </div>
         <p>${c.text}</p>
@@ -240,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const rating = Number(form.rating.value);
         if (!name || !text) return;
 
-        const avatar = customAvatarDataUrl || selectedAvatar;
+        const avatar = customAvatarDataUrl || selectedAvatar || MALE_AVATAR;
 
         await addDoc(collection(db, "uwagi"), {
             name,
@@ -253,10 +267,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         form.reset();
         updateStars(5);
+
         avatarOptions.forEach(a => a.classList.remove("selected"));
         avatarOptions[0]?.classList.add("selected");
-        selectedAvatar = avatarOptions[0]?.dataset.avatar;
+        selectedAvatar = MALE_AVATAR;
         customAvatarDataUrl = null;
+
         notice.style.display = "block";
         notice.scrollIntoView({ behavior: "smooth" });
     });
