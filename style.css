@@ -1217,7 +1217,7 @@ footer {
 }
 
 .card::after {
-    top: 90px;
+    top: 55px;
 }
 section::after {
     display: none;
@@ -1252,6 +1252,7 @@ section::after {
         0 0 0 4px rgba(255,215,0,.25),
         0 14px 36px rgba(255,215,0,.45);
 }
+
 
 
 
