@@ -1,4 +1,4 @@
-﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -122,19 +122,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateStars(currentRating);
 
-    /* ===== AVATAR PICKER (FIXED) ===== */
+    /* ===== AVATAR PICKER ===== */
     const avatarOptions = document.querySelectorAll(".avatar-option");
-    let selectedAvatar = "male.png";
+    const customAvatarInput = document.getElementById("custom-avatar-input");
+    let selectedAvatar = avatarOptions[0]?.dataset.avatar;
+    let customAvatarDataUrl = null;
 
     avatarOptions.forEach(img => {
         img.addEventListener("click", () => {
             avatarOptions.forEach(a => a.classList.remove("selected"));
             img.classList.add("selected");
-            selectedAvatar = img.dataset.avatar === "female" ? "female.png" : "male.png";
+            selectedAvatar = img.dataset.avatar;
+            customAvatarDataUrl = null;
         });
     });
 
-    /* ===== KOMENTARZE — FIREBASE + SLIDER ===== */
+    customAvatarInput?.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            customAvatarDataUrl = reader.result;
+            avatarOptions.forEach(a => a.classList.remove("selected"));
+            let previewImg = document.querySelector(".avatar-option.custom");
+            if (!previewImg) {
+                previewImg = document.createElement("img");
+                previewImg.className = "avatar-option custom";
+                document.querySelector(".avatar-picker").prepend(previewImg);
+            }
+            previewImg.src = customAvatarDataUrl;
+            previewImg.classList.add("selected");
+            selectedAvatar = null;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    /* ===== KOMENTARZE — FIREBASE + SMOOTH SLIDER ===== */
     const reviewsTrack = document.getElementById("reviews-track");
     const prevBtn = document.getElementById("reviews-prev");
     const nextBtn = document.getElementById("reviews-next");
@@ -142,12 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const notice = document.getElementById("comment-notice");
 
     let currentIndex = 0;
-    let cardsPerView = 3;
+    const cardsPerView = 3;
     let totalCards = 0;
-
-    function getCardsPerView() {
-        return window.innerWidth <= 640 ? 1 : 3;
-    }
+    let cardWidth = 0;
 
     async function loadComments() {
         if (!reviewsTrack) return;
@@ -161,13 +181,11 @@ document.addEventListener("DOMContentLoaded", () => {
         reviewsTrack.innerHTML = "";
 
         docs.forEach(c => {
-            const gender = c.gender === "female" ? "female.png" : "male.png";
-
             const div = document.createElement("div");
             div.className = "testimonial";
             div.innerHTML = `
         <div class="testimonial-header">
-          <img src="${gender}" class="testimonial-avatar">
+          <img src="${c.avatar}" class="testimonial-avatar">
           <strong>${c.name}</strong>
         </div>
         <p>${c.text}</p>
@@ -177,42 +195,46 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         totalCards = reviewsTrack.children.length;
+        requestAnimationFrame(calcSizes);
+    }
+
+    function calcSizes() {
+        const card = reviewsTrack.children[0];
+        if (!card) return;
+        const gap = 20;
+        cardWidth = card.offsetWidth + gap;
         updateSlider();
     }
 
     function updateSlider() {
-    const card = reviewsTrack.children[0];
-    if (!card) return;
+        reviewsTrack.style.transform = `translate3d(-${currentIndex * cardWidth}px,0,0)`;
+    }
 
-    const gap = 24; // dokładnie tyle co w CSS
-    const cardWidth = card.offsetWidth + gap;
+    function next() {
+        if (currentIndex < totalCards - cardsPerView) {
+            currentIndex++;
+            updateSlider();
+        }
+    }
 
-    reviewsTrack.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-}
-
-
-    prevBtn?.addEventListener("click", () => {
+    function prev() {
         if (currentIndex > 0) {
             currentIndex--;
             updateSlider();
         }
-    });
-
-nextBtn?.addEventListener("click", () => {
-    if (currentIndex < totalCards - 3) {
-        currentIndex++;
-        updateSlider();
     }
-});
 
+    nextBtn?.addEventListener("click", next);
+    prevBtn?.addEventListener("click", prev);
 
     window.addEventListener("resize", () => {
         currentIndex = 0;
-        updateSlider();
+        requestAnimationFrame(calcSizes);
     });
 
     loadComments();
 
+    /* ===== FORM ===== */
     form?.addEventListener("submit", async e => {
         e.preventDefault();
 
@@ -221,15 +243,13 @@ nextBtn?.addEventListener("click", () => {
         const rating = Number(form.rating.value);
         if (!name || !text) return;
 
-        const avatar = selectedAvatar;
-        const gender = selectedAvatar === "female.png" ? "female" : "male";
+        const avatar = customAvatarDataUrl || selectedAvatar;
 
         await addDoc(collection(db, "uwagi"), {
             name,
             text,
             rating,
             avatar,
-            gender,
             status: "pending",
             createdAt: Date.now()
         });
@@ -238,7 +258,8 @@ nextBtn?.addEventListener("click", () => {
         updateStars(5);
         avatarOptions.forEach(a => a.classList.remove("selected"));
         avatarOptions[0]?.classList.add("selected");
-        selectedAvatar = "male.png";
+        selectedAvatar = avatarOptions[0]?.dataset.avatar;
+        customAvatarDataUrl = null;
         notice.style.display = "block";
         notice.scrollIntoView({ behavior: "smooth" });
     });
@@ -256,5 +277,3 @@ nextBtn?.addEventListener("click", () => {
 
     document.querySelectorAll("[data-animate]").forEach(el => observer.observe(el));
 });
-
-
