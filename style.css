@@ -1274,3 +1274,96 @@ footer {
     display: none;
   }
 }
+/* =========================================================
+   🔥 LUXURY AVATARS — FOR REAL (DIV-BASED)
+========================================================= */
+
+/* ===== FORM AVATAR PICKER ===== */
+.avatar-picker {
+  gap: 14px;
+}
+
+.avatar-option {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #fff4b8, #ffd700, #d4af37) !important;
+  box-shadow:
+    0 0 0 2px rgba(255,215,0,.65),
+    0 12px 30px rgba(255,215,0,.55),
+    inset 0 0 10px rgba(255,255,255,.55) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  opacity: .55 !important;
+  transition: transform .25s ease, box-shadow .25s ease, opacity .25s ease !important;
+}
+
+/* fake face highlight */
+.avatar-option::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), transparent 40%),
+    radial-gradient(circle at 65% 65%, rgba(255,215,0,.7), transparent 55%);
+  opacity: .85;
+}
+
+.avatar-option:hover {
+  opacity: .85 !important;
+  transform: scale(1.12) !important;
+}
+
+.avatar-option.selected {
+  opacity: 1 !important;
+  transform: scale(1.18) !important;
+  box-shadow:
+    0 0 0 3px rgba(255,215,0,1),
+    0 22px 60px rgba(255,215,0,.85),
+    inset 0 0 14px rgba(255,255,255,.85) !important;
+}
+
+/* ===== TESTIMONIAL AVATARS ===== */
+.testimonial-header div,
+.testimonial-avatar,
+.testimonial img,
+.testimonial .avatar {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #fff4b8, #ffd700, #d4af37) !important;
+  box-shadow:
+    0 0 0 2px rgba(255,215,0,.7),
+    0 16px 40px rgba(255,215,0,.6),
+    inset 0 0 10px rgba(255,255,255,.6) !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* glossy face effect */
+.testimonial-header div::after,
+.testimonial-avatar::after,
+.testimonial .avatar::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), transparent 40%),
+    radial-gradient(circle at 65% 65%, rgba(255,215,0,.7), transparent 55%);
+  opacity: .9;
+}
+
+.testimonial:hover .testimonial-header div,
+.testimonial:hover .testimonial-avatar,
+.testimonial:hover .avatar {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 3px rgba(255,215,0,.95),
+    0 22px 60px rgba(255,215,0,.85),
+    inset 0 0 14px rgba(255,255,255,.85) !important;
+}
+
