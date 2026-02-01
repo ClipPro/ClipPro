@@ -181,14 +181,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateSlider() {
-        cardsPerView = getCardsPerView();
-        const card = reviewsTrack?.children[0];
-        if (!card) return;
+    const card = reviewsTrack.children[0];
+    if (!card) return;
 
-        const gap = 20;
-        const cardWidth = card.offsetWidth + gap;
-        reviewsTrack.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-    }
+    const gap = 24; // dokładnie tyle co w CSS
+    const cardWidth = card.offsetWidth + gap;
+
+    reviewsTrack.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+}
+
 
     prevBtn?.addEventListener("click", () => {
         if (currentIndex > 0) {
@@ -254,3 +255,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll("[data-animate]").forEach(el => observer.observe(el));
 });
+
