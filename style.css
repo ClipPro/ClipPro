@@ -1316,3 +1316,8 @@ footer {
     0 0 0 3px rgba(255,215,0,1),
     0 18px 46px rgba(255,215,0,.9);
 }
+body {
+  outline: 10px solid red !important;
+}
+
+
