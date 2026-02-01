@@ -198,12 +198,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    nextBtn?.addEventListener("click", () => {
-        if (currentIndex < totalCards - cardsPerView) {
-            currentIndex++;
-            updateSlider();
-        }
-    });
+nextBtn?.addEventListener("click", () => {
+    if (currentIndex < totalCards - 3) {
+        currentIndex++;
+        updateSlider();
+    }
+});
+
 
     window.addEventListener("resize", () => {
         currentIndex = 0;
@@ -255,4 +256,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll("[data-animate]").forEach(el => observer.observe(el));
 });
+
 
