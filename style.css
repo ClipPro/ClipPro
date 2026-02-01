@@ -1207,3 +1207,11 @@ footer {
         min-width: 85%;
     }
 }
+.card {
+    padding-top: 28px;
+}
+
+.card::after {
+    top: 62px;
+}
+
