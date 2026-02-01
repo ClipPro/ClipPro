@@ -1208,10 +1208,16 @@ footer {
     }
 }
 .card {
-    padding-top: 28px;
+    padding-top: 32px;
+}
+
+.card h3 {
+    position: relative;
+    z-index: 2;
 }
 
 .card::after {
-    top: 62px;
+    top: 70px;
 }
+
 
