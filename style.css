@@ -1217,8 +1217,9 @@ footer {
 }
 
 .card::after {
-    top: 60px;
+    top: 90px;
 }
+
 
 
 
