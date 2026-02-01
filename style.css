@@ -1252,35 +1252,46 @@ section::after {
         0 0 0 4px rgba(255,215,0,.25),
         0 14px 36px rgba(255,215,0,.45);
 }
-.avatar-picker img {
+img[src*="avatar"],
+img[src*="male"],
+img[src*="female"],
+.testimonial-avatar,
+.avatar-picker img,
+.comment-form img {
     width: 48px !important;
     height: 48px !important;
     border-radius: 50% !important;
     object-fit: cover !important;
-    filter: saturate(1.35) contrast(1.3) brightness(1.1) !important;
+    filter: saturate(1.4) contrast(1.35) brightness(1.12) !important;
     box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.28),
-        0 10px 28px rgba(0,0,0,.5) !important;
-    opacity: .85 !important;
+        inset 0 0 0 2px rgba(255,255,255,.3),
+        0 12px 32px rgba(0,0,0,.55) !important;
+    opacity: .9 !important;
     transition: transform .22s ease, box-shadow .22s ease, opacity .22s ease;
 }
 
-.avatar-picker img:hover {
+img[src*="avatar"]:hover,
+img[src*="male"]:hover,
+img[src*="female"]:hover,
+.testimonial-avatar:hover,
+.avatar-picker img:hover,
+.comment-form img:hover {
     transform: scale(1.12) !important;
-    opacity: 1 !important;
     box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.38),
-        0 14px 36px rgba(255,215,0,.45) !important;
+        inset 0 0 0 2px rgba(255,255,255,.4),
+        0 16px 42px rgba(255,215,0,.45) !important;
 }
 
+img[src*="avatar"].selected,
+.testimonial-avatar.selected,
 .avatar-picker img.selected {
-    opacity: 1 !important;
-    filter: saturate(1.45) contrast(1.35) brightness(1.15) !important;
     box-shadow:
         inset 0 0 0 3px rgba(255,215,0,.95),
         0 0 0 5px rgba(255,215,0,.35),
-        0 18px 44px rgba(255,215,0,.6) !important;
+        0 20px 48px rgba(255,215,0,.65) !important;
 }
+
+
 
 
 
