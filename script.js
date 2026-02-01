@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -122,51 +122,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateStars(currentRating);
 
-    /* ===== AVATAR SYSTEM (FIXED + CLEAN) ===== */
-
-    const MALE_AVATAR = "https://api.dicebear.com/7.x/personas/svg?seed=male&backgroundColor=b6e3f4";
-    const FEMALE_AVATAR = "https://api.dicebear.com/7.x/personas/svg?seed=female&backgroundColor=fad0c4";
-
+    /* ===== AVATAR PICKER (FIXED) ===== */
     const avatarOptions = document.querySelectorAll(".avatar-option");
-    const customAvatarInput = document.getElementById("custom-avatar-input");
-
-    let selectedAvatar = MALE_AVATAR;
-    let customAvatarDataUrl = null;
-
-    // Init default preview images
-    avatarOptions.forEach(opt => {
-        if (opt.dataset.avatar === "male") opt.src = MALE_AVATAR;
-        if (opt.dataset.avatar === "female") opt.src = FEMALE_AVATAR;
-    });
-
-    avatarOptions[0]?.classList.add("selected");
+    let selectedAvatar = "male.png";
 
     avatarOptions.forEach(img => {
         img.addEventListener("click", () => {
             avatarOptions.forEach(a => a.classList.remove("selected"));
             img.classList.add("selected");
-            selectedAvatar = img.src;
-            customAvatarDataUrl = null;
+            selectedAvatar = img.dataset.avatar === "female" ? "female.png" : "male.png";
         });
-    });
-
-    customAvatarInput?.addEventListener("change", e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            customAvatarDataUrl = reader.result;
-            avatarOptions.forEach(a => a.classList.remove("selected"));
-            let previewImg = document.querySelector(".avatar-option.custom");
-            if (!previewImg) {
-                previewImg = document.createElement("img");
-                previewImg.className = "avatar-option custom selected";
-                document.querySelector(".avatar-picker").prepend(previewImg);
-            }
-            previewImg.src = customAvatarDataUrl;
-            selectedAvatar = customAvatarDataUrl;
-        };
-        reader.readAsDataURL(file);
     });
 
     /* ===== KOMENTARZE — FIREBASE + SLIDER ===== */
@@ -196,13 +161,13 @@ document.addEventListener("DOMContentLoaded", () => {
         reviewsTrack.innerHTML = "";
 
         docs.forEach(c => {
-            const avatarSrc = c.avatar || MALE_AVATAR;
+            const gender = c.gender === "female" ? "female.png" : "male.png";
 
             const div = document.createElement("div");
             div.className = "testimonial";
             div.innerHTML = `
         <div class="testimonial-header">
-          <img src="${avatarSrc}" class="testimonial-avatar">
+          <img src="${gender}" class="testimonial-avatar">
           <strong>${c.name}</strong>
         </div>
         <p>${c.text}</p>
@@ -254,25 +219,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const rating = Number(form.rating.value);
         if (!name || !text) return;
 
-        const avatar = customAvatarDataUrl || selectedAvatar || MALE_AVATAR;
+        const avatar = selectedAvatar;
+        const gender = selectedAvatar === "female.png" ? "female" : "male";
 
         await addDoc(collection(db, "uwagi"), {
             name,
             text,
             rating,
             avatar,
+            gender,
             status: "pending",
             createdAt: Date.now()
         });
 
         form.reset();
         updateStars(5);
-
         avatarOptions.forEach(a => a.classList.remove("selected"));
         avatarOptions[0]?.classList.add("selected");
-        selectedAvatar = MALE_AVATAR;
-        customAvatarDataUrl = null;
-
+        selectedAvatar = "male.png";
         notice.style.display = "block";
         notice.scrollIntoView({ behavior: "smooth" });
     });
